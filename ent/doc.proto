@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package ent;
+option go_package = "/ent";
+
+message Keyword {
+  string Field = 1;
+  string Word = 2;
+}
+
+message Document {
+  string Id = 1;
+  uint64 Uid = 2;
+  uint64 Features = 3;
+  repeated Keyword Keywords = 4;
+  bytes Bytes = 5;
+}
+
+// protoc --go_out=. --go-grpc_out=. --proto_path=./ent doc.proto

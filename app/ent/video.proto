@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package ent;
+
+option go_package = "app/ent";
+
+message BiliBiliVideo {
+  string Id = 1;
+  string Title = 2;
+  int64 PostAt = 3;
+  string Author = 4;
+  uint32 View = 5;
+  uint32 Like = 6;
+  uint32 Coin = 7;
+  uint32 Favorite = 8;
+  uint32 Share = 9;
+  repeated string Keywords = 10;
+}
+
+// protoc --go_out=. --go-grpc_out=. --proto_path=./app/ent video.proto

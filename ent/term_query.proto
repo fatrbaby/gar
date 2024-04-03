@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ent;
+
+option go_package = "/ent";
+
+import "ent/doc.proto";
+
+message TermQuery {
+  Keyword Keyword = 1;
+  repeated TermQuery Must = 2;
+  repeated TermQuery Should = 3;
+}
+
+// protoc -I=. --go_out=. --proto_path=./ent term_query.proto
