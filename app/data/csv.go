@@ -1,4 +1,4 @@
-package source
+package data
 
 import (
 	"encoding/csv"
@@ -15,10 +15,16 @@ import (
 	"time"
 )
 
-const CsvDataSource = ""
+type CsvDatasource struct {
+	file string
+}
 
-func BuildIndexes(csvSource string, indexer *searcher.Indexer, numWorkers int, workerNum int) {
-	file, err := os.Open(csvSource)
+func NewCsvSource(locationCsv string) *CsvDatasource {
+	return &CsvDatasource{locationCsv}
+}
+
+func (c *CsvDatasource) BuildIndexes(indexer *searcher.Indexer, numWorkers int, workerId int) {
+	file, err := os.Open(c.file)
 
 	if err != nil {
 		slog.Error("open csv file failed: {}", err)
@@ -50,7 +56,7 @@ func BuildIndexes(csvSource string, indexer *searcher.Indexer, numWorkers int, w
 
 		docId := strings.TrimPrefix(record[0], "https://www.bilibili.com/video/")
 
-		if numWorkers > 0 && int(hasher.Hash32WithSeed([]byte(docId), 0))%numWorkers != workerNum {
+		if numWorkers > 0 && int(hasher.Hash32WithSeed([]byte(docId), 0))%numWorkers != workerId {
 			continue
 		}
 
@@ -98,6 +104,7 @@ func BuildIndexes(csvSource string, indexer *searcher.Indexer, numWorkers int, w
 }
 
 func addIndex(video *ent.BiliBiliVideo, indexer *searcher.Indexer) {
+
 	doc := entity.Document{
 		Id: video.Id,
 	}

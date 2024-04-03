@@ -32,7 +32,7 @@ func (b *BadgerDriver) WithPath(path string) *BadgerDriver {
 func (b *BadgerDriver) Open() error {
 	dir := b.Path()
 
-	if err := os.MkdirAll(path.Base(dir), os.ModePerm); err != nil {
+	if err := os.MkdirAll(path.Dir(dir), os.ModePerm); err != nil {
 		return err
 	}
 
@@ -196,7 +196,7 @@ func (b *BadgerDriver) Fold(f func(k []byte, v []byte) error) int64 {
 				continue
 			}
 
-			if err := f(item.Key(), value); err != nil {
+			if err := f(item.Key(), value); err == nil {
 				atomic.AddInt64(&num, 1)
 			}
 

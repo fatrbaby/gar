@@ -1,7 +1,7 @@
 package search
 
 import (
-	"gar/app/source"
+	"gar/app/data"
 	"gar/searcher"
 	"google.golang.org/grpc"
 	"log/slog"
@@ -12,8 +12,10 @@ import (
 )
 
 type Worker struct {
-	options *WorkerOptions
-	service *searcher.Searcher
+	ID         int
+	options    *WorkerOptions
+	service    *searcher.Searcher
+	datasource data.Source
 }
 
 func NewSearcherWorker(options *WorkerOptions) *Worker {
@@ -23,26 +25,36 @@ func NewSearcherWorker(options *WorkerOptions) *Worker {
 	}
 }
 
-func (s *Worker) Run() {
-	go s.teardown()
-	s.startup()
+func (w *Worker) Run() {
+	go w.teardown()
+	w.startup()
 }
 
-func (s *Worker) startup() {
-	err := s.service.Setup(100000, s.options.StoragePath())
+func (w *Worker) WithDatasource(ds data.Source) *Worker {
+	w.datasource = ds
+
+	return w
+}
+
+func (w *Worker) startup() {
+	err := w.service.Setup(100000, w.options.StoragePath())
 
 	if err != nil {
 		panic(err)
 	}
 
-	if s.options.RebuildIndex {
-		source.BuildIndexes(source.CsvDataSource, s.service.Indexer, 1, s.options.Number)
+	if w.options.RebuildIndex {
+		if w.datasource != nil {
+			w.datasource.BuildIndexes(w.service.Indexer, w.options.Total, w.options.ID)
+		} else {
+			slog.Warn("No datasource set when rebuild indexes")
+		}
 	} else {
-		s.service.LoadFromStorage()
+		w.service.LoadFromStorage()
 	}
 
 	slog.Info("register searcher worker")
-	err = s.service.Online(s.options.EtcdEndpoints, s.options.Port)
+	err = w.service.Online(w.options.EtcdEndpoints, w.options.Port)
 
 	if err != nil {
 		slog.Error("register searcher worker failed: {}", err)
@@ -50,27 +62,27 @@ func (s *Worker) startup() {
 		slog.Info("register searcher worker success")
 	}
 
-	listener, err := net.Listen("tcp", s.options.Addr())
+	listener, err := net.Listen("tcp", w.options.Addr())
 
 	if err != nil {
 		panic(err)
 	}
 
 	server := grpc.NewServer()
-	searcher.RegisterSearchServiceServer(server, s.service)
+	searcher.RegisterSearchServiceServer(server, w.service)
 
 	if err = server.Serve(listener); err != nil {
-		_ = s.service.Close()
-		slog.Error("start grpc server on port :{} failed: {}", s.options.Port, err)
+		_ = w.service.Close()
+		slog.Error("start grpc server on port :{} failed: {}", w.options.Port, err)
 	}
 }
 
-func (s *Worker) teardown() {
+func (w *Worker) teardown() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 
-	if err := s.service.Close(); err != nil {
+	if err := w.service.Close(); err != nil {
 		slog.Warn("quit search worker failed: {}", err)
 	} else {
 		slog.Info("quit search worker success")

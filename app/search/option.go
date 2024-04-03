@@ -7,12 +7,13 @@ import (
 )
 
 type WorkerOptions struct {
+	ID            int
 	Host          string
 	Port          int
 	Workdir       string
-	Number        int
 	RebuildIndex  bool
 	EtcdEndpoints registry.EtcdEndpoints
+	Total         int
 }
 
 func (o *WorkerOptions) Addr() string {
@@ -20,5 +21,5 @@ func (o *WorkerOptions) Addr() string {
 }
 
 func (o *WorkerOptions) StoragePath() string {
-	return path.Join(o.Workdir, fmt.Sprintf("%s%d", "_part", o.Number))
+	return path.Join(o.Workdir, fmt.Sprintf("%s%d", "_part", o.ID))
 }
