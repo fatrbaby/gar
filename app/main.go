@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"gar/app/data"
 	"gar/app/search"
 	"gar/shortcut"
@@ -11,8 +10,6 @@ import (
 func main() {
 	cwd := shortcut.CurrentPath()
 	workdir := path.Join(cwd, "var")
-
-	fmt.Println("workdir", workdir)
 
 	options := &search.WorkerOptions{
 		ID:            1,

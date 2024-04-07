@@ -247,11 +247,14 @@ func (b *BadgerDriver) Gc() {
 
 	if vlogSize2 < vlogSize1 {
 		slog.Info(
-			"badger before GC, LSM {}, vlog {}. after GC, LSM {}, vlog {}",
-			lsmSize1,
-			vlogSize1,
-			lsmSize2,
-			vlogSize2,
+			"badger before GC",
+			"LSM", lsmSize1,
+			"vlog", vlogSize1,
+		)
+		slog.Info(
+			"badger after GC",
+			"LSM", lsmSize2,
+			"vlog", vlogSize2,
 		)
 	} else {
 		slog.Info("collect zero garbage")

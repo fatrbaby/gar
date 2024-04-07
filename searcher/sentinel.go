@@ -37,7 +37,7 @@ func (s *Sentinel) Conn(endpoint string) *grpc.ClientConn {
 		stat := conn.GetState()
 
 		if stat == connectivity.TransientFailure || stat == connectivity.Shutdown {
-			slog.Warn("connection status to endpoint {} is {}", endpoint, stat)
+			slog.Warn("connection status to endpoint", "endpoint", endpoint, "stat", stat)
 			_ = conn.Close()
 		} else {
 			return conn
@@ -55,11 +55,11 @@ func (s *Sentinel) Conn(endpoint string) *grpc.ClientConn {
 	)
 
 	if err != nil {
-		slog.Error("dial {} failed: {}", endpoint, err)
+		slog.Error("grpc service dial failed", "endpoint", endpoint, "error", err)
 		return nil
 	}
 
-	slog.Info("connected to grpc server {}", endpoint)
+	slog.Info("connected to grpc server", "endpoint", endpoint)
 	s.pools.Store(endpoint, conn)
 
 	return conn
@@ -85,7 +85,7 @@ func (s *Sentinel) Add(doc *ent.Document) (int, error) {
 		return 0, err
 	}
 
-	slog.Info("add {} docs to {}", affected.Count, endpoint)
+	slog.Info("add docs", "count", affected.Count, "endpoint", endpoint)
 
 	return int(affected.Count), nil
 }
@@ -113,9 +113,9 @@ func (s *Sentinel) Delete(docId string) int {
 
 				if err == nil {
 					atomic.AddInt32(&n, affected.Count)
-					slog.Info("delete {} docs from worker {}", affected.Count, endpoint)
+					slog.Info("delete docs from worker", "count", affected.Count, "endpoint", endpoint)
 				} else {
-					slog.Error("delete doc {} from worker {} failed: {}", docId, endpoint, err)
+					slog.Error("delete doc from worker failed", "docId", docId, "endpoint", endpoint, "error", err)
 				}
 			}
 		}(endpoint)
@@ -155,13 +155,13 @@ func (s *Sentinel) Search(q *ent.TermQuery, onFlag uint64, offFlag uint64, orFla
 
 				if err == nil {
 					if len(r.Documents) > 0 {
-						slog.Info("matched {} docs from worker {}", len(r.Documents), endpoint)
+						slog.Info("matched docs from worker", "count", len(r.Documents), "endpoint", endpoint)
 						for _, doc := range r.Documents {
 							docChan <- doc
 						}
 					}
 				} else {
-					slog.Warn("search from cluster failed {}", err)
+					slog.Warn("search from cluster failed", "error", err)
 				}
 			}
 		}(endpoint)
@@ -212,10 +212,10 @@ func (s *Sentinel) Count() int {
 				if err == nil {
 					if affected.Count > 0 {
 						atomic.AddInt32(&n, affected.Count)
-						slog.Info("worker {} have {} documents", endpoint, affected.Count)
+						slog.Info("worker documents", "endpoint", endpoint, "count", affected.Count)
 					}
 				} else {
-					slog.Warn("get doc count from worker {} failed: {}", endpoint, err)
+					slog.Warn("get doc count from worker failed", "endpoint", endpoint, "error", err)
 				}
 			}
 		}(endpoint)

@@ -27,7 +27,7 @@ func (c *CsvDatasource) BuildIndexes(indexer *searcher.Indexer, numWorkers int, 
 	file, err := os.Open(c.file)
 
 	if err != nil {
-		slog.Error("open csv file failed: {}", err)
+		slog.Error("open csv file failed", "error", err)
 		return
 	}
 
@@ -45,7 +45,7 @@ func (c *CsvDatasource) BuildIndexes(indexer *searcher.Indexer, numWorkers int, 
 
 		if err != nil {
 			if err != io.EOF {
-				slog.Error("read csv file failed: {}", err)
+				slog.Error("read csv file failed", "error", err)
 			}
 			break
 		}
@@ -57,7 +57,7 @@ func (c *CsvDatasource) BuildIndexes(indexer *searcher.Indexer, numWorkers int, 
 		docId := strings.TrimPrefix(record[0], "https://www.bilibili.com/video/")
 
 		if numWorkers > 0 && int(hasher.Hash32WithSeed([]byte(docId), 0))%numWorkers != workerId {
-			continue
+			//continue
 		}
 
 		video := &ent.BiliBiliVideo{
@@ -72,7 +72,7 @@ func (c *CsvDatasource) BuildIndexes(indexer *searcher.Indexer, numWorkers int, 
 			if err == nil {
 				video.PostAt = t.Unix()
 			} else {
-				slog.Warn("parse {} to time failed: {}", record[2], err)
+				slog.Warn("parse to time failed", "time", record[2], "error", err)
 			}
 		}
 
@@ -104,7 +104,6 @@ func (c *CsvDatasource) BuildIndexes(indexer *searcher.Indexer, numWorkers int, 
 }
 
 func addIndex(video *ent.BiliBiliVideo, indexer *searcher.Indexer) {
-
 	doc := entity.Document{
 		Id: video.Id,
 	}
@@ -114,7 +113,7 @@ func addIndex(video *ent.BiliBiliVideo, indexer *searcher.Indexer) {
 	if err == nil {
 		doc.Bytes = bytes
 	} else {
-		slog.Error("Serialize video failed: {}", err)
+		slog.Error("Serialize video failed", "error", err)
 		return
 	}
 
@@ -139,8 +138,8 @@ func addIndex(video *ent.BiliBiliVideo, indexer *searcher.Indexer) {
 	n, err := indexer.Add(&doc)
 
 	if err == nil {
-		slog.Info("add {} indexes", n)
+		slog.Info("add indexes", "total", n)
 	} else {
-		slog.Error("add index error: {}", err)
+		slog.Error("add index failed", "error", err)
 	}
 }

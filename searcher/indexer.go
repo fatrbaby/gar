@@ -50,7 +50,7 @@ func (i *Indexer) Search(q *ent.TermQuery, onFlag uint64, offFlag uint64, orFlag
 	docs, err := i.forwardIndex.BatchGet(keys)
 
 	if err != nil {
-		slog.Error("db read failed: {}", err)
+		slog.Error("db read failed", "error", err)
 		return nil
 	}
 
@@ -81,7 +81,7 @@ func (i *Indexer) LoadFromFile() int {
 		var doc ent.Document
 
 		if err := decoder.Decode(&doc); err != nil {
-			slog.Warn("gob decode failed: {}", err)
+			slog.Warn("gob decode failed", "error", err)
 			return err
 		}
 
@@ -90,7 +90,7 @@ func (i *Indexer) LoadFromFile() int {
 		return nil
 	})
 
-	slog.Info("loaded {} data from forward index {}", n, i.forwardIndex.Path())
+	slog.Info("loaded data from forward index", "num", n, "path", i.forwardIndex.Path())
 
 	return int(n)
 }

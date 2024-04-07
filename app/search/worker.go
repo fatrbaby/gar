@@ -45,7 +45,9 @@ func (w *Worker) startup() {
 
 	if w.options.RebuildIndex {
 		if w.datasource != nil {
+			slog.Info("start rebuild indexes")
 			w.datasource.BuildIndexes(w.service.Indexer, w.options.Total, w.options.ID)
+			slog.Info("rebuild indexes done")
 		} else {
 			slog.Warn("No datasource set when rebuild indexes")
 		}
@@ -53,13 +55,13 @@ func (w *Worker) startup() {
 		w.service.LoadFromStorage()
 	}
 
-	slog.Info("register searcher worker")
+	slog.Info("start register searcher worker")
 	err = w.service.Online(w.options.EtcdEndpoints, w.options.Port)
 
 	if err != nil {
-		slog.Error("register searcher worker failed: {}", err)
+		slog.Error("register searcher worker failed", "error", err)
 	} else {
-		slog.Info("register searcher worker success")
+		slog.Info("register searcher worker done")
 	}
 
 	listener, err := net.Listen("tcp", w.options.Addr())
@@ -73,7 +75,7 @@ func (w *Worker) startup() {
 
 	if err = server.Serve(listener); err != nil {
 		_ = w.service.Close()
-		slog.Error("start grpc server on port :{} failed: {}", w.options.Port, err)
+		slog.Error("start grpc server failed", "port", w.options.Port, "error", err)
 	}
 }
 
@@ -83,7 +85,7 @@ func (w *Worker) teardown() {
 	<-quit
 
 	if err := w.service.Close(); err != nil {
-		slog.Warn("quit search worker failed: {}", err)
+		slog.Warn("quit search worker failed", "error", err)
 	} else {
 		slog.Info("quit search worker success")
 	}
