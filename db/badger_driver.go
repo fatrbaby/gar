@@ -199,8 +199,6 @@ func (b *BadgerDriver) Fold(f func(k []byte, v []byte) error) int64 {
 			if err := f(item.Key(), value); err == nil {
 				atomic.AddInt64(&num, 1)
 			}
-
-			return nil
 		}
 
 		return nil
