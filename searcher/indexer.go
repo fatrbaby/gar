@@ -90,7 +90,7 @@ func (i *Indexer) LoadFromFile() int {
 		return nil
 	})
 
-	slog.Info("loaded data from forward index", "num", n, "path", i.forwardIndex.Path())
+	slog.Info("loaded data from forward index", "count", n, "path", i.forwardIndex.Path())
 
 	return int(n)
 }
@@ -122,7 +122,7 @@ func (i *Indexer) Add(doc *ent.Document) (int, error) {
 
 	i.reverseIndex.Add(doc)
 
-	return 0, nil
+	return 1, nil
 }
 
 func (i *Indexer) Delete(id string) int {

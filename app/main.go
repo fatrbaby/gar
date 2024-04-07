@@ -12,13 +12,13 @@ func main() {
 	workdir := path.Join(cwd, "var")
 
 	options := &search.WorkerOptions{
-		ID:            1,
+		ID:            0,
 		Host:          "127.0.0.1",
 		Port:          6123,
 		Workdir:       workdir,
-		RebuildIndex:  true,
+		RebuildIndex:  false,
 		EtcdEndpoints: []string{"127.0.0.1:2379"},
-		Total:         1,
+		NumWorkers:    1,
 	}
 
 	worker := search.NewSearcherWorker(options)

@@ -46,7 +46,7 @@ func (w *Worker) startup() {
 	if w.options.RebuildIndex {
 		if w.datasource != nil {
 			slog.Info("start rebuild indexes")
-			w.datasource.BuildIndexes(w.service.Indexer, w.options.Total, w.options.ID)
+			w.datasource.BuildIndexes(w.service.Indexer, w.options.NumWorkers, w.options.ID)
 			slog.Info("rebuild indexes done")
 		} else {
 			slog.Warn("No datasource set when rebuild indexes")
@@ -83,6 +83,8 @@ func (w *Worker) teardown() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
+
+	slog.Info("close searcher worker server...")
 
 	if err := w.service.Close(); err != nil {
 		slog.Warn("quit search worker failed", "error", err)

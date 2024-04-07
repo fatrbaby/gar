@@ -57,7 +57,7 @@ func (c *CsvDatasource) BuildIndexes(indexer *searcher.Indexer, numWorkers int, 
 		docId := strings.TrimPrefix(record[0], "https://www.bilibili.com/video/")
 
 		if numWorkers > 0 && int(hasher.Hash32WithSeed([]byte(docId), 0))%numWorkers != workerId {
-			//continue
+			continue
 		}
 
 		video := &ent.BiliBiliVideo{
@@ -138,7 +138,7 @@ func addIndex(video *ent.BiliBiliVideo, indexer *searcher.Indexer) {
 	n, err := indexer.Add(&doc)
 
 	if err == nil {
-		slog.Info("add indexes", "total", n)
+		slog.Info("add indexes", "count", n)
 	} else {
 		slog.Error("add index failed", "error", err)
 	}

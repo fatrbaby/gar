@@ -7,13 +7,14 @@ import (
 )
 
 type WorkerOptions struct {
+	// ID start from 0
 	ID            int
 	Host          string
 	Port          int
 	Workdir       string
 	RebuildIndex  bool
 	EtcdEndpoints registry.EtcdEndpoints
-	Total         int
+	NumWorkers    int
 }
 
 func (o *WorkerOptions) Addr() string {
