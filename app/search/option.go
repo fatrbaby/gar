@@ -12,7 +12,7 @@ type WorkerOptions struct {
 	Host          string
 	Port          int
 	Workdir       string
-	RebuildIndex  bool
+	BuildIndexes  bool
 	EtcdEndpoints registry.EtcdEndpoints
 	NumWorkers    int
 }

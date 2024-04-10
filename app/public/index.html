@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视频搜索 | Gar video search engine</title>
+    <link href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body class="bg-gray-100">
+<!-- 导航条 -->
+<nav class="bg-gray-800 text-white py-4">
+    <div class="container mx-auto">
+        <span class="text-lg">Gar Video Search</span>
+    </div>
+</nav>
+
+<div id="app">
+    <!-- 中间部分 - 信息检索表单 -->
+    <div class="container mx-auto mt-8">
+        <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="keyword">关键字</label>
+                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                       id="keyword" type="text" placeholder="关键字" v-model="form.keyword">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="author">作者</label>
+                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                       id="author" type="text" placeholder="作者" v-model="form.author">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">类别</label>
+                <div class="inline-flex">
+                    <template v-for="cate in categories">
+                        <label class="mr-4">
+                            <input type="checkbox" class="mr-2" name="category" :value="cate.text" v-model="form.categories">{{cate.text}}
+                        </label>
+                    </template>
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="play-count">
+                    播放
+                </label>
+                <input class="py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-full"
+                       id="play-count" type="range" min="0" max="1000000" step="1" v-model="form.viewCount">
+            </div>
+
+            <div class="mb-4">
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                        type="button">
+                    搜索
+                </button>
+            </div>
+        </form>
+    </div>
+
+
+    <!-- 下面部分 - 检索信息结果列表 -->
+    <div class="container mx-auto">
+        <table class="min-w-full">
+            <thead>
+            <tr>
+                <th class="px-4 py-2">编号</th>
+                <th class="px-4 py-2">作者</th>
+                <th class="px-4 py-2">标题</th>
+                <th class="px-4 py-2">播放量</th>
+                <th class="px-4 py-2">关键字</th>
+                <th class="px-4 py-2">发布时间</th>
+            </tr>
+            </thead>
+            <tbody class="text-center">
+            <!-- Placeholder for test data -->
+            <tr>
+                <td class="border px-4 py-2">1</td>
+                <td class="border px-4 py-2">John Doe</td>
+                <td class="border px-4 py-2">Sample Title</td>
+                <td class="border px-4 py-2">1000</td>
+                <td class="border px-4 py-2">Sample Keyword</td>
+                <td class="border px-4 py-2">2024-04-09</td>
+            </tr>
+            <!-- Add more rows here for additional test data -->
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="/js/app.js"></script>
+</body>
+</html>

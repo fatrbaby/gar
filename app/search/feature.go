@@ -19,29 +19,34 @@ const (
 	Programming
 )
 
-var features = map[uint64]string{
-	Information:       "资讯",
-	Society:           "社会",
-	Hotspot:           "热点",
-	Life:              "生活",
-	Knowledge:         "知识",
-	Universal:         "环球",
-	Game:              "游戏",
-	Comprehensive:     "综合",
-	Daily:             "日常",
-	FilmAndTelevision: "影视",
-	Anime:             "动漫",
-	Tech:              "科技",
-	Entertainment:     "娱乐",
-	Programming:       "编程",
+type Category struct {
+	Bit  uint64 `json:"bit"`
+	Text string `json:"text"`
 }
 
-func SimpleFeatures(keywords []string) uint64 {
+var Categories = []Category{
+	{Bit: Information, Text: "资讯"},
+	{Bit: Society, Text: "社会"},
+	{Bit: Hotspot, Text: "热点"},
+	{Bit: Life, Text: "生活"},
+	{Bit: Knowledge, Text: "知识"},
+	{Bit: Universal, Text: "环球"},
+	{Bit: Game, Text: "游戏"},
+	{Bit: Comprehensive, Text: "综合"},
+	{Bit: Daily, Text: "日常"},
+	{Bit: FilmAndTelevision, Text: "影视"},
+	{Bit: Anime, Text: "动漫"},
+	{Bit: Tech, Text: "科技"},
+	{Bit: Entertainment, Text: "娱乐"},
+	{Bit: Programming, Text: "编程"},
+}
+
+func CategoryFeatures(keywords []string) uint64 {
 	var feature uint64
 
-	for f, category := range features {
-		if slices.Contains(keywords, category) {
-			feature |= f
+	for _, category := range Categories {
+		if slices.Contains(keywords, category.Text) {
+			feature |= category.Bit
 		}
 	}
 

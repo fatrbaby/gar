@@ -43,7 +43,7 @@ func (w *Worker) startup() {
 		panic(err)
 	}
 
-	if w.options.RebuildIndex {
+	if w.options.BuildIndexes {
 		if w.datasource != nil {
 			slog.Info("start rebuild indexes")
 			w.datasource.BuildIndexes(w.service.Indexer, w.options.NumWorkers, w.options.ID)
