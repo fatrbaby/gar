@@ -1,4 +1,4 @@
-package search
+package ent
 
 type RequestBody struct {
 	Author     string   `json:"author"`

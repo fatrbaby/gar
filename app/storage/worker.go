@@ -1,4 +1,4 @@
-package search
+package storage
 
 import (
 	"gar/app/data"
@@ -18,7 +18,7 @@ type Worker struct {
 	datasource data.Source
 }
 
-func NewSearcherWorker(options *WorkerOptions) *Worker {
+func NewWorker(options *WorkerOptions) *Worker {
 	return &Worker{
 		options: options,
 		service: searcher.NewSearcher(),

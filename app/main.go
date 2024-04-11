@@ -3,7 +3,7 @@ package main
 import (
 	"gar/app/data"
 	"gar/app/handler"
-	"gar/app/search"
+	"gar/app/storage"
 	"gar/shortcut"
 	"github.com/gofiber/fiber/v3"
 	"log"
@@ -11,6 +11,8 @@ import (
 )
 
 func main() {
+	go worker()
+	
 	app := fiber.New(fiber.Config{
 		AppName: "Gar",
 	})
@@ -28,7 +30,7 @@ func worker() {
 	cwd := shortcut.CurrentPath()
 	workdir := path.Join(cwd, "var")
 
-	options := &search.WorkerOptions{
+	options := &storage.WorkerOptions{
 		ID:            0,
 		Host:          "127.0.0.1",
 		Port:          6123,
@@ -38,7 +40,7 @@ func worker() {
 		NumWorkers:    1,
 	}
 
-	worker := search.NewSearcherWorker(options)
+	worker := storage.NewWorker(options)
 	worker.WithDatasource(data.NewCsvSource(workdir + "/bili_video.csv"))
 	worker.Run()
 }

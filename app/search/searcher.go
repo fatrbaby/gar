@@ -3,6 +3,8 @@ package search
 import (
 	"gar/app/ent"
 	"gar/app/search/bus"
+	"gar/app/search/filterer"
+	"gar/app/search/recaller"
 	"golang.org/x/exp/maps"
 	"log/slog"
 	"reflect"
@@ -21,10 +23,6 @@ type Filterer interface {
 type VideoSearcher struct {
 	Recallers []Recaller
 	Filterers []Filterer
-}
-
-func NewVideoSearcher() *VideoSearcher {
-	return &VideoSearcher{}
 }
 
 func (s *VideoSearcher) WithRecaller(recallers ...Recaller) *VideoSearcher {
@@ -81,8 +79,8 @@ func (s *VideoSearcher) Recall(ctx *bus.Context) {
 }
 
 func (s *VideoSearcher) Filter(c *bus.Context) {
-	for _, filterer := range s.Filterers {
-		filterer.Apply(c)
+	for _, f := range s.Filterers {
+		f.Apply(c)
 	}
 }
 
@@ -99,10 +97,22 @@ func (s *VideoSearcher) Search(c *bus.Context) []*ent.BiliBiliVideo {
 	return c.Results
 }
 
-type KeywordVideoSearcher struct {
-	VideoSearcher
+func NewVideoSearcher() *VideoSearcher {
+	s := &VideoSearcher{}
+	s.WithRecaller(&recaller.KeywordRecaller{})
+	s.WithFilterer(&filterer.ViewRangeFilterer{})
+
+	return s
 }
 
 type AuthorVideoSearcher struct {
 	VideoSearcher
+}
+
+func NewAuthOrVideoSearcher() *AuthorVideoSearcher {
+	s := &AuthorVideoSearcher{}
+	s.WithRecaller(&recaller.KeywordAndAuthorRecaller{})
+	s.WithFilterer(&filterer.ViewRangeFilterer{})
+
+	return s
 }
