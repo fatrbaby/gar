@@ -1,10 +1,10 @@
 package handler
 
 import (
-	"gar/app/search"
+	"gar/app/ent"
 	"github.com/gofiber/fiber/v3"
 )
 
 func Categories(c fiber.Ctx) error {
-	return c.JSON(search.Categories)
+	return c.JSON(ent.Categories)
 }

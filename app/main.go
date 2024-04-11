@@ -19,6 +19,7 @@ func main() {
 
 	api := app.Group("/api")
 	api.Get("/categories", handler.Categories)
+	api.Post("/search", handler.Search)
 
 	log.Fatalln(app.Listen(":5321"))
 }
