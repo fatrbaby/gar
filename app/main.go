@@ -5,14 +5,14 @@ import (
 	"gar/app/handler"
 	"gar/app/storage"
 	"gar/shortcut"
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 	"log"
 	"path"
 )
 
 func main() {
 	go worker()
-	
+
 	app := fiber.New(fiber.Config{
 		AppName: "Gar",
 	})

@@ -2,9 +2,9 @@ package handler
 
 import (
 	"gar/app/ent"
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 )
 
-func Categories(c fiber.Ctx) error {
+func Categories(c *fiber.Ctx) error {
 	return c.JSON(ent.Categories)
 }
