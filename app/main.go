@@ -11,22 +11,38 @@ import (
 )
 
 func main() {
-	go worker()
+	w := createStandaloneWorker()
+
+	go func() {
+		w.Run()
+	}()
 
 	app := fiber.New(fiber.Config{
 		AppName: "Gar",
 	})
 
+	h := handler.New(w.Indexer())
+
 	app.Static("/", "./public")
 
 	api := app.Group("/api")
-	api.Get("/categories", handler.Categories)
-	api.Post("/search", handler.Search)
+	api.Get("/categories", h.Categories)
+	api.Post("/search", h.Search)
 
 	log.Fatalln(app.Listen(":5321"))
 }
 
-func worker() {
+func createStandaloneWorker() storage.Worker {
+	cwd := shortcut.CurrentPath()
+	workdir := path.Join(cwd, "var")
+
+	worker := storage.NewStandaloneWorker(path.Join(workdir, "standalone"), false)
+	worker.WithDatasource(data.NewCsvSource(workdir + "/bili_video.csv"))
+
+	return worker
+}
+
+func createDistributedWorker() storage.Worker {
 	cwd := shortcut.CurrentPath()
 	workdir := path.Join(cwd, "var")
 
@@ -40,7 +56,8 @@ func worker() {
 		NumWorkers:    1,
 	}
 
-	worker := storage.NewWorker(options)
+	worker := storage.NewDistributedWorker(options)
 	worker.WithDatasource(data.NewCsvSource(workdir + "/bili_video.csv"))
-	worker.Run()
+
+	return worker
 }

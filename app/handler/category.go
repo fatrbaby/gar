@@ -5,6 +5,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func Categories(c *fiber.Ctx) error {
+func (_ *Handler) Categories(c *fiber.Ctx) error {
 	return c.JSON(ent.Categories)
 }
