@@ -5,9 +5,8 @@ createApp({
         const form = reactive({
             keyword: "",
             author: "",
-            viewCount: 0,
-            viewsFrom: 10,
-            viewsTo: 100000,
+            viewsFrom: 0,
+            viewsTo: 0,
             categories: [],
         })
 
@@ -28,9 +27,9 @@ createApp({
                 const data = {
                     author: form.author,
                     categories: form.categories,
-                    keywords: form.keyword.split(',').filter(Boolean), // 过滤空关键字
-                    viewsFrom: form.viewsFrom,
-                    viewsTo: form.viewsTo,
+                    keywords: form.keyword.split(',').filter(Boolean),
+                    viewsFrom: Number(form.viewsFrom),
+                    viewsTo: Number(form.viewsTo),
                 }
 
                 const r = await fetch("/api/search", {
@@ -54,8 +53,20 @@ createApp({
         }
 
         const dateFormat = (ts) => {
-            return new Date(ts * 1000).toISOString().split('T')[0];
-        }
+            if (typeof ts !== 'number' || isNaN(ts)) {
+                return 'error time'
+            }
+
+            const t = new Date(ts * 1000)
+            const y = t.getFullYear()
+            const m = String(t.getMonth() + 1).padStart(2, '0')
+            const d = String(t.getDate()).padStart(2, '0')
+            const h = String(t.getHours()).padStart(2, '0')
+            const i = String(t.getMinutes()).padStart(2, '0')
+            const s = String(t.getSeconds()).padStart(2, '0')
+
+            return `${y}-${m}-${d} ${h}:${i}:${s}`;
+        };
 
         return {
             form,

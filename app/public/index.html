@@ -41,11 +41,16 @@
                 </div>
             </div>
             <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="play-count">
+                <label class="block text-gray-700 text-sm font-bold mb-2">
                     播放
                 </label>
-                <input class="py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-full"
-                       id="play-count" type="range" min="0" max="1000000" step="1" v-model="form.viewCount">
+                <input class="py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-2/5"
+                       type="range" min="0" max="50000" step="10" v-model="form.viewsFrom">
+                <input class="py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-2/5 ml-3"
+                       type="range" min="50000" max="1000000" step="10" v-model="form.viewsTo">
+            </div>
+            <div class="mb-4">
+                播放量: {{form.viewsFrom}} — {{form.viewsTo}}
             </div>
 
             <div class="mb-4">

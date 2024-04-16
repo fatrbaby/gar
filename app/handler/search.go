@@ -20,7 +20,7 @@ func (h *Handler) Search(c *fiber.Ctx) error {
 
 	keywords := shortcut.CleanKeywords(b.Keywords)
 
-	if len(keywords) == 0 || len(b.Author) == 0 {
+	if len(keywords) == 0 && len(b.Author) == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "keyword or author are required",
 		})
